@@ -11,3 +11,17 @@ Advisors:
   <li>Suman Hazarika, Apollo Hospital Guwahati</li>
 </ul>  
 </p>  
+
+<h3>Important Libraries to be installed:</h3>
+<ul>
+  <li>Numpy<a href = ""></a></li>
+  <li>Scipy<a href = ""></a></li>
+  <li>Scikit-Learn<a href = ""></a></li>
+  <li>Scikit-Image<a href = ""></a></li>
+  <li>Matplotlib<a href = ""></a></li>
+  <li>PyDicom<a href = ""></a></li>
+  <li>Nipype<a href = ""></a></li>
+  <li>Mayavi<a href = ""></a></li>
+  <li>Pandas<a href = ""></a></li>
+  <li>NiPy<a href = ""></a></li>
+</ul>  
