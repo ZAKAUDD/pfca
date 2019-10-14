@@ -1,11 +1,11 @@
 # Cerebral Microbleed Detection in Susceptibility Weighted Imaging(SWI) of Neurologically Healthy Patients
 </br>
-<p>Main Contributors:
+<p><b>Main Contributors:</b>
 <ul>
-  <li><b>Shwetank Panwar, Dept of Biotechnology, IIT Guwahati</b></li>
-  <li><b>Rajiv Ramesh Sangle, Dept of Physics, IIT Guwahati</b></li>
+  <li>Shwetank Panwar, Dept of Biotechnology, IIT Guwahati</li>
+  <li>Rajiv Ramesh Sangle, Dept of Physics, IIT Guwahati</li>
 </ul>
-Advisors:
+<b>Advisors:</b>
 <ul>
   <li>Cota Navin Gupta, IIT Guwahati</li>
   <li>Suman Hazarika, Apollo Hospital Guwahati</li>
