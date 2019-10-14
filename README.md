@@ -5,7 +5,7 @@
   <li>Shwetank Panwar(Author)</li>
   <li>Rajiv Ramesh Sangle</li>
 </ul>
-</br>Advisors:
+Advisors:
 <ul>
   <li>Cota Navin Gupta, IIT Guwahati</li>
   <li>Suman Hazarika, Apollo Hospital Guwahati</li>
