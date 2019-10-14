@@ -16,7 +16,7 @@ Advisors:
 <ul>
   <li>Numpy<a href = ""></a></li>
   <li>Scipy<a href = ""></a></li>
-  <li>Scikit-Learn<a href = "https://scikit-learn.org/stable/">[Docs]</a> <a href = "https://scikit-learn.org/stable/install.html">[Installation]</a></li>
+  <li>Scikit-Learn<a href = "https://scikit-learn.org/stable/" target = "_blank">[Docs]</a> <a href = "https://scikit-learn.org/stable/install.html"  target = "_blank">[Installation]</a></li>
   <li>Scikit-Image<a href = ""></a></li>
   <li>Matplotlib<a href = ""></a></li>
   <li>PyDicom<a href = ""></a></li>
