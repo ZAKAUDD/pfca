@@ -2,8 +2,8 @@
 </br>
 <p>Main Contributors:
 <ul>
-  <li>Shwetank Panwar, Dept of Biotechnology, IIT Guwahati</li>
-  <li>Rajiv Ramesh Sangle, Dept of Physics, IIT Guwahati</li>
+  <li><b>Shwetank Panwar, Dept of Biotechnology, IIT Guwahati</b></li>
+  <li><b>Rajiv Ramesh Sangle, Dept of Physics, IIT Guwahati</b></li>
 </ul>
 Advisors:
 <ul>
