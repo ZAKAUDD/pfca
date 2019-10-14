@@ -20,6 +20,7 @@ Advisors:
   <li>Scikit-Image<a href = ""></a></li>
   <li>Matplotlib<a href = ""></a></li>
   <li>PyDicom<a href = ""></a></li>
+  <li>Advanced Normalization Toolkit(ANTS) <a href = "http://stnava.github.io/ANTs/">[Docs]</a> <a href = "https://github.com/ANTsX/ANTsPy/blob/master/tutorials/InstallingANTsPy.md">[Installation]</a></li>
   <li>Nipype<a href = ""></a></li>
   <li>Mayavi<a href = ""></a></li>
   <li>Pandas<a href = ""></a></li>
