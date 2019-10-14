@@ -24,5 +24,6 @@ Advisors:
   <li>Nipype <a href = "https://nipype.readthedocs.io/en/latest/">[Docs]</a></li>
   <li>Mayavi <a href = "https://docs.enthought.com/mayavi/mayavi/auto/mlab_helper_functions.html#mayavi.mlab.imshow">[Docs]</a> <a href = "https://pypi.org/project/mayavi/">[Installation]</a></li>
   <li>Pandas <a href = "https://pandas.pydata.org">[Docs]</a></li>
-  <li>NiPy<a href = ""></a></li>
+  <li>FSL Brain Extraction Toolkit <a href = "https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FslInstallation/MacOsX">[Installation]</a></li>
+  <li>Simple ITK <a href = "http://insightsoftwareconsortium.github.io/SimpleITK-Notebooks/Python_html/30_Segmentation_Region_Growing.html">[Docs]</a> <a href = "https://pypi.org/project/SimpleITK/">[Installation]</a></li>
 </ul>  
