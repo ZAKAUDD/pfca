@@ -29,3 +29,38 @@ def results_mosaic(rst_output_matrix, image_array, params):
                 #plt.savefig(cur_path + '/visuals/stills_2d/' + name)
             pdf.savefig()
             plt.close()    
+
+
+#draw ROI on the images and display the results
+def draw_roi(image,peaks,r):
+    ##Arguments:
+    # image : 3D image on which the labelling is needed to be done
+    # peaks : array containing the list of local maximas
+    # r     : radius of the ROI bounding box
+    import os
+    import datetime
+    from matplotlib import pyplot as plt
+    from skimage.draw import rectangle_perimeter
+    import matplotlib.patches as mpathches
+    cur_path = os.getcwd()
+    name = str((datetime.datetime.now()).strftime("%d%m%Y_%H%M%S")) + '.png'
+    n = len(peaks)
+    grid_n = int(n/2 if n%2 == 0 else ((n+1)/2))
+    
+    plt.figure(figsize = (12,14))
+    for i in range(n):    
+        p = peaks[i]
+        temp = image[:,:,p[2]]
+        plt.subplot(grid_n,2,i+1)
+        plt.imshow(temp, cmap = plt.get_cmap('gray'))
+        ax = plt.gca()
+        rect = mpathches.Rectangle((p[1]-r, p[0]-r), 2*r, 2*r,
+                                  fill= False, edgecolor = 'red', linewidth = 1)
+        ax.add_patch(rect)
+        #ax.set_axis_off()
+    plt.tight_layout() 
+    plt.savefig(cur_path + '/visuals/stills_2d/' + name)
+    plt.show()           
+    
+
+     
