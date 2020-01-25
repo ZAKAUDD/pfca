@@ -114,11 +114,12 @@ def snip_matrix(snip_list):
     feature_matrix = feature_matgen(snip_list[0])
     for i in range(1, len(snip_list)):
         feature_matrix = feature_matgen(snip_list[i], feature_matrix)
-    return feature_matrix    
+    return feature_matrix
 
-#2D visualization using t-SNE, Isomap and PCA for estimating the effectiveness of feature space
-#NOTE: Dimensions are reduced across columns
-def viz_dimensional(feature_matrix, algo = 'tsne', colormap = None, labelmap = None):
+
+# 2D visualization using t-SNE, Isomap and PCA for estimating the effectiveness of feature space
+# NOTE: Dimensions are reduced across columns
+def viz_dimensional(feature_matrix, algo='tsne', colormap=None, labelmap=None, txtlabels=False):
     from matplotlib import pyplot as plt
     import datetime
     import os
@@ -130,7 +131,8 @@ def viz_dimensional(feature_matrix, algo = 'tsne', colormap = None, labelmap = N
         plt_title = 't-Stochastic Neighbour Embedding(t-SNE) plot'
     elif algo == 'pca':
         from sklearn.decomposition import PCA
-        pca = PCA(n_components = 2,svd_solver = 'full')
+        pca = PCA(n_components=2, svd_solver='full')
+        pc_mat = PCA(n_components=40, svd_solver='full').fit(feature_matrix)
         x_embed = pca.fit_transform(feature_matrix)
         plt_title = 'Principal Component Analysis(PCA) plot'
     elif algo == 'isomap':
@@ -141,24 +143,164 @@ def viz_dimensional(feature_matrix, algo = 'tsne', colormap = None, labelmap = N
         return
     else:
         print("Error: Some unknown value of algo argument is encountered. Aborting..")
-    plt.figure(figsize= (12,8))
-    ax =plt.gca()
+    plt.figure(figsize=(12, 8))
+    ax = plt.gca()
     scale = np.ones(x_embed.shape[0]) * 100
     print(x_embed.shape)
     if (colormap == None) and (labelmap == None):
-        ax.scatter(x_embed[:,0], x_embed[:,1], alpha = 0.3, s = scale)
+        ax.scatter(x_embed[:, 0], x_embed[:, 1], alpha=0.3, s=scale)
     elif (colormap != None) and (labelmap != None):
         for ind in list(labelmap.keys()):
             index = ind.split(':')
-            ax.scatter(x_embed[int(index[0]):int(index[1]),0], x_embed[int(index[0]):int(index[1]),1], 
-                       alpha = 0.3, s = scale, c = colormap[int(index[0]):int(index[1])], label = labelmap[ind])
+            ax.scatter(x_embed[int(index[0]):int(index[1]), 0], x_embed[int(index[0]):int(index[1]), 1],
+                       alpha=0.3, s=scale, c=colormap[int(index[0]):int(index[1])], label=labelmap[ind])
         ax.legend()
     else:
         print("Error: Either colorlist or label list is missing from the arguments.")
+
+    if txtlabels == True:
+        n = feature_matrix.shape[0]
+        txts = list(np.arange(n) + 1)
+        for i, txt in enumerate(txts):
+            ax.annotate(txt, (x_embed[i, 0], x_embed[i, 1]))
+
     ax.grid(True)
     plt.title(plt_title)
     plt.savefig(cur_path + '/visuals/stills_2d/' + name)
-    #ax.set_axis_off()
-    plt.show()                
+    # ax.set_axis_off()
+    plt.show()
+    if algo == 'pca':
+        return x_embed, pc_mat
+    else:
+        return x_embed
                         
-     
+####################################################################################################################
+###################################################################################################################
+#Heat map function code....Particularly useful to plot Confusion matrix and other parameter results
+#Courtesy of Vishwas Mishra who insisted me on developing the heatmap code....
+
+#helper function taken from matplotlib website
+#Refer to the following page :
+# https://matplotlib.org/3.1.1/gallery/images_contours_and_fields/image_annotated_heatmap.html
+################################################################################################################
+def heatmap(data, row_labels, col_labels, ax=None,
+            cbar_kw={}, cbarlabel="", **kwargs):
+    """
+    Create a heatmap from a numpy array and two lists of labels.
+
+    Parameters
+    ----------
+    data
+        A 2D numpy array of shape (N, M).
+    row_labels
+        A list or array of length N with the labels for the rows.
+    col_labels
+        A list or array of length M with the labels for the columns.
+    ax
+        A `matplotlib.axes.Axes` instance to which the heatmap is plotted.  If
+        not provided, use current axes or create a new one.  Optional.
+    cbar_kw
+        A dictionary with arguments to `matplotlib.Figure.colorbar`.  Optional.
+    cbarlabel
+        The label for the colorbar.  Optional.
+    **kwargs
+        All other arguments are forwarded to `imshow`.
+    """
+
+    if not ax:
+        ax = plt.gca()
+
+    # Plot the heatmap
+    im = ax.imshow(data, **kwargs)
+
+    # Create colorbar
+    cbar = ax.figure.colorbar(im, ax=ax, **cbar_kw)
+    cbar.ax.set_ylabel(cbarlabel, rotation=-90, va="bottom")
+
+    # We want to show all ticks...
+    ax.set_xticks(np.arange(data.shape[1]))
+    ax.set_yticks(np.arange(data.shape[0]))
+    # ... and label them with the respective list entries.
+    ax.set_xticklabels(col_labels)
+    ax.set_yticklabels(row_labels)
+
+    # Let the horizontal axes labeling appear on top.
+    ax.tick_params(top=True, bottom=False,
+                   labeltop=True, labelbottom=False)
+
+    # Rotate the tick labels and set their alignment.
+    plt.setp(ax.get_xticklabels(), rotation=-30, ha="right",
+             rotation_mode="anchor")
+
+    # Turn spines off and create white grid.
+    for edge, spine in ax.spines.items():
+        spine.set_visible(False)
+
+    ax.set_xticks(np.arange(data.shape[1]+1)-.5, minor=True)
+    ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
+    ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
+    ax.tick_params(which="minor", bottom=False, left=False)
+
+    return im, cbar
+
+
+def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
+                     textcolors=["black", "white"],
+                     threshold=None, **textkw):
+    """
+    A function to annotate a heatmap.
+
+    Parameters
+    ----------
+    im
+        The AxesImage to be labeled.
+    data
+        Data used to annotate.  If None, the image's data is used.  Optional.
+    valfmt
+        The format of the annotations inside the heatmap.  This should either
+        use the string format method, e.g. "$ {x:.2f}", or be a
+        `matplotlib.ticker.Formatter`.  Optional.
+    textcolors
+        A list or array of two color specifications.  The first is used for
+        values below a threshold, the second for those above.  Optional.
+    threshold
+        Value in data units according to which the colors from textcolors are
+        applied.  If None (the default) uses the middle of the colormap as
+        separation.  Optional.
+    **kwargs
+        All other arguments are forwarded to each call to `text` used to create
+        the text labels.
+    """
+
+    if not isinstance(data, (list, np.ndarray)):
+        data = im.get_array()
+
+    # Normalize the threshold to the images color range.
+    if threshold is not None:
+        threshold = im.norm(threshold)
+    else:
+        threshold = im.norm(data.max())/2.
+
+    # Set default alignment to center, but allow it to be
+    # overwritten by textkw.
+    kw = dict(horizontalalignment="center",
+              verticalalignment="center")
+    kw.update(textkw)
+
+    # Get the formatter in case a string is supplied
+    if isinstance(valfmt, str):
+        valfmt = matplotlib.ticker.StrMethodFormatter(valfmt)
+
+    # Loop over the data and create a `Text` for each "pixel".
+    # Change the text's color depending on the data.
+    texts = []
+    for i in range(data.shape[0]):
+        for j in range(data.shape[1]):
+            kw.update(color=textcolors[int(im.norm(data[i, j]) > threshold)])
+            text = im.axes.text(j, i, valfmt(data[i, j], None), **kw)
+            texts.append(text)
+
+    return texts
+
+#######################################################################################################################
+#######################################################################################################################
