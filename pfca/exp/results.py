@@ -62,6 +62,16 @@ def draw_roi(image,peaks,r):
     plt.savefig(cur_path + '/visuals/stills_2d/' + name)
     plt.show()           
    
+#Snipping out the cubical 3D region out of the candidate detection based on local peaks
+def roi_snipping(image,peaks,r):
+    import numpy as np
+    roi_array = []  #list in which all the roi images will be stored
+    for i in range(len(peaks)):
+        p = peaks[i]
+        temp = image[p[0]-r:p[0]+r, p[1]-r:p[1]+r, p[2]-r:p[2]+r]
+        roi_array.append(temp)
+    return roi_array
+
 
 #generate colormap for the labels provided
 def generate_colormap(array, label, color, c_matrix = None, l_matrix = None):

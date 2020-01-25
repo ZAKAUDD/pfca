@@ -131,19 +131,19 @@ class data_dictionary:
         self.splitted = False
         # self.labels = None
 
-    def append(self, data, labelling, session=np.nan, resplit=False):
+    def append(self, data, labelling, resplit=False):
         # add the images into the dictionary along with the label
         # dataset : list of image patches
         # label : target/non-target as 0/1
         for i in range(len(data)):
             if labelling == 'target':
-                temp = {'image': [data[i]], 'label': 1, 'session': session}
+                temp = {'image': [data[i]], 'label': 1}
                 # print(labelling)
             elif labelling == 'non_target':
-                temp = {'image': [data[i]], 'label': 0, 'session': session}
+                temp = {'image': [data[i]], 'label': 0}
                 # print(labelling)
             else:
-                temp = {'image': [data[i]], 'label': labelling, 'session': session}
+                temp = {'image': [data[i]], 'label': labelling}
             # append the temporary dataframe into the dataset frame
             tempo = pd.DataFrame.from_records(temp)
             self.dataset = self.dataset.append(tempo, ignore_index=True, sort=True)
@@ -239,6 +239,147 @@ class data_dictionary:
     def show(self):
         return self.dataset
 
-#######################################################################################################################
-#######################################################################################################################
 
+
+#######################################################################################################################
+#######################################################################################################################
+# data repository generation for data handling
+# This dictionary will be easily manageable using this class since we can keep track of microbleed detections and how
+# are classified by the different classifiers
+class dataset_management:
+    def __init__(self):
+        import pandas as pd
+        import numpy as np
+        self.dataset = pd.DataFrame(columns=['patient_name', 'RST_peak', 'image_patch', 'label'])
+        self.splitted = False
+        # self.labels = None
+
+    def append(self, patient, peaks, image_patches, resplit=False):
+        # add the images into the dictionary along with the label
+        # dataset : list of image patches
+        # label : target/non-target as 0/1
+        import pandas as pd
+        import numpy as np
+        for i in range(len(peaks)):
+            temp = {'patient_name': patient, 'RST_peak': [peaks[i]], 'image_patch': [image_patches[i]]}
+            # append the temporary dataframe into the dataset frame
+            tempo = pd.DataFrame.from_records(temp)
+            self.dataset = self.dataset.append(tempo, ignore_index=True, sort=True)
+        # Finally, if some data is appended, it can be splitted again
+        if resplit == True:
+            self.splitted = False
+            print("Respilit allowed. To split the data again, use the train_test_split() now!")
+
+    def disp_by_index(self, index):
+        # display a specific image according to the index value of the dataset matrix
+        return (self.dataset.iloc[index])['image']
+
+    def return_by_label(self, label):
+        # Return a list of images based on the label(target/non-target)
+        k = self.dataset
+        if label == 'target':
+            return k.loc[k['label'] == 1]
+        elif label == 'non_target':
+            return k.loc[k['label'] == 0]
+        else:
+            print("Label not defined for the samples. Please manually label the data.")
+
+    def train_test_split(self, ratio=0.7, balanced=True):
+        # Arguments:
+        # data_dictionary - dictionary datatype which contains labels for the images(0 - non target, 1 - target)
+        # ratio - train_dataset_size / total_dataset_size
+        #
+        # give session labels to the data points : 'train', 'test', 'validation'
+        import pandas as pd
+        import numpy as np
+        k = self.dataset
+        targets = k.loc[k['label'] == 1]
+        non_targets = k.loc[k['label'] == 0]
+
+        n_targets = len(targets)
+        n_non_t = len(non_targets)
+
+        n_comm = min(n_targets, n_non_t)
+        list_target = targets.index.values
+        list_non_targets = non_targets.index.values
+
+        if self.splitted == True:
+            print("Dataset splitting already happened! Aborting..")
+        elif balanced == True and self.splitted == False:  # It will produce a balanced class with equal no of targets and non-targets
+            # Decategorizing data in case of appending
+            k['session'] = np.nan
+
+            num = int(ratio * n_comm)  # no of target points to select
+
+            trainees = np.random.choice(list_target, size=(num,), replace=False)
+            trainees2 = np.random.choice(list_non_targets, size=(num,), replace=False)
+            all_train = np.append(trainees, trainees2)
+            k.loc[all_train, ['session']] = 'train'  # Labelling the datapoints as training points
+
+            num_test = n_comm - num  # No of test target points
+            target_left = k.loc[(k['label'] == 1) & (k['session'] != 'train')]
+            non_targets_left = k.loc[(k['label'] == 0) & (k['session'] != 'train')]
+            list_target_left = target_left.index.values
+            list_non_targets_left = non_targets_left.index.values
+            tests1 = np.random.choice(list_target_left, size=(num_test,), replace=False)
+            tests2 = np.random.choice(list_non_targets_left, size=(num_test,), replace=False)
+            all_test = np.append(tests1, tests2)
+            k.loc[all_test, ['session']] = 'test'  # Labelling the datapoints as training points
+            self.splitted = True
+            self.dataset = k
+            return
+
+    def feature_matrix_raw(self, session, ravel=True):
+        import pandas as pd
+        import numpy as np
+        if self.splitted == False:
+            print("Dataset not ready for classification step. Please perform train-test split first.")
+        elif self.splitted == True:
+            k = self.dataset
+            all_session_data = k.loc[k['session'] == session]
+
+            img_dim = (all_session_data.iloc[0]['image']).shape
+            feature_vector_len = img_dim[0] * img_dim[1] * img_dim[2]
+
+            features = []
+            labels = []
+
+            for idx in range(len(all_session_data)):
+                # print(idx)
+                t_img = np.array((all_session_data.iloc[idx])['image'])
+                labels.append(all_session_data.iloc[idx]['label'])
+                features.append(t_img)
+
+            labels = np.array(labels)
+
+            if ravel == True:
+                feature_matrix = np.zeros((len(all_session_data), feature_vector_len))
+                for i in range(len(all_session_data)):
+                    feature_matrix[i, :] = np.ravel(features[i])
+                return feature_matrix, labels
+            elif ravel == False:
+                return features, labels
+
+    def show(self):
+        return self.dataset
+
+    def disp_roi(self, patient):
+        import pandas as pd
+        import numpy as np
+        from pfca.exp.results import draw_roi
+        from pfca.core.preprocessing import nifti_ANTS, mni_template_registration
+        from pfca import init_path
+        import os
+        raw_dir, nifti_dir = init_path()
+        cur_path = os.getcwd()
+        k = self.dataset
+        im_nifti = nifti_ANTS(nifti_dir, patient, category='eswan', unskulled=True)
+        im_patient = mni_template_registration(cur_path, im_nifti, patient)
+        patient_data = k.loc[k['patient_name'] == patient]
+        peaks = patient_data['RST_peak'].tolist()
+        draw_roi(im_patient, peaks, 5)
+
+        
+
+########################################################################################################################
+########################################################################################################################
