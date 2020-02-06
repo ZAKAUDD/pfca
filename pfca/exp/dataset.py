@@ -379,7 +379,57 @@ class dataset_management:
         peaks = patient_data['RST_peak'].tolist()
         draw_roi(im_patient, peaks, 5)
 
-        
+    def disp_detection(self, patient, index):
+        import pandas as pd
+        import numpy as np
+        from pfca.exp.results import draw_roi
+        from pfca.core.preprocessing import nifti_ANTS, mni_template_registration
+        from pfca import init_path
+        import os
+        raw_dir, nifti_dir = init_path()
+        cur_path = os.getcwd()
+        k = self.dataset
+        im_nifti = nifti_ANTS(nifti_dir, patient, category='eswan', unskulled=True)
+        im_patient = mni_template_registration(cur_path, im_nifti, patient)
+        #patient_data = k.loc[k['patient_name'] == patient]
 
+        peak = (k.iloc[index]['RST_peak']).tolist()
+        draw_roi(im_patient, [peak], 5)
+
+    def store_results(self, r, folder_name):
+        d = self.dataset     #Writing so long names is not cool enough
+        ###First make a folder for storing all the images
+        import os
+        from skimage.draw import rectangle_perimeter
+        import matplotlib.patches as mpathches   
+        from pfca.core.preprocessing import nifti_ANTS, mni_template_registration
+        cur_path = os.getcwd()
+        snips_dir = str(cur_path)+"/visuals/RST_snips/"+ folder_name + "/"
+        try:
+            os.makedirs(snips_dir)
+        except FileExistsError:
+            print("Directory Exists!")
+        ############
+        #Moving to the important stuff...Get Data...
+        #peaks = d['RST_peak'].tolist()
+        ###########
+        from matplotlib import pyplot as plt
+        for i in range(len(d)):    
+            plt.figure(figsize = (12,14))
+            p = (d.iloc[i]['RST_peak']).tolist()
+            patient = d.iloc[i]['patient_name']
+            im_nifti = nifti_ANTS(nifti_dir, patient, category='eswan', unskulled=True)
+            image = mni_template_registration(cur_path, im_nifti, patient)        
+            temp = image[:,:,p[2]]
+            plt.imshow(temp, cmap = plt.get_cmap('gray'))
+            plt.title("Patient : " + patient + "; " + "Coordinate : " + str(p))
+            ax = plt.gca()
+            rect = mpathches.Rectangle((p[1]-r, p[0]-r), 2*r, 2*r,
+                                      fill= False, edgecolor = 'red', linewidth = 1)
+            ax.add_patch(rect)
+            #ax.set_axis_off()
+            plt.savefig(snips_dir + patient + "_" + str(i) + ".png")
+            plt.close()
+        #plt.tight_layout()     
 ########################################################################################################################
 ########################################################################################################################
