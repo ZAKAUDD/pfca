@@ -1,2 +1,5 @@
-/datasets/*
-/RST_outputs_all/*
+/datasets/**
+
+/RST_outputs_all/**
+
+/visuals/**
