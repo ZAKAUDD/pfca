@@ -433,3 +433,43 @@ class dataset_management:
         #plt.tight_layout()     
 ########################################################################################################################
 ########################################################################################################################
+
+
+#Function to store all the snippets in one folder for manual labelling
+def store_results(dataset, r, folder_name):
+    d = dataset     #Writing so long names is not cool enough
+    ###First make a folder for storing all the images
+    from pfca import init_path
+    import os
+    from skimage.draw import rectangle_perimeter
+    import matplotlib.patches as mpathches   
+    from pfca.core.preprocessing import nifti_ANTS, mni_template_registration
+    cur_path = os.getcwd()
+    raw_dir, nifti_dir = init_path()
+    snips_dir = str(cur_path)+"/visuals/RST_snips/"+ folder_name + "/"
+    try:
+        os.makedirs(snips_dir)
+    except FileExistsError:
+        print("Directory Exists!")
+    ############
+    #Moving to the important stuff...Get Data...
+    #peaks = d['RST_peak'].tolist()
+    ###########
+    from matplotlib import pyplot as plt
+    for i in range(len(d)):    
+        plt.figure(figsize = (12,14))
+        p = (d.iloc[i]['RST_peak']).tolist()
+        patient = d.iloc[i]['patient_name']
+        im_nifti = nifti_ANTS(nifti_dir, patient, category='eswan', unskulled=True)
+        image = mni_template_registration(cur_path, im_nifti, patient)        
+        temp = image[:,:,p[2]]
+        plt.imshow(temp, cmap = plt.get_cmap('gray'))
+        plt.title("Patient : " + patient + "; " + "Coordinate : " + str(p))
+        ax = plt.gca()
+        rect = mpathches.Rectangle((p[1]-r, p[0]-r), 2*r, 2*r,
+                                  fill= False, edgecolor = 'red', linewidth = 1)
+        ax.add_patch(rect)
+        #ax.set_axis_off()
+        plt.savefig(snips_dir + patient + "_" + str(i) + ".png")
+        plt.close()
+    #plt.tight_layout()     
