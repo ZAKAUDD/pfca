@@ -473,3 +473,16 @@ def store_results(dataset, r, folder_name):
         plt.savefig(snips_dir + patient + "_" + str(i) + ".png")
         plt.close()
     #plt.tight_layout()     
+
+############################################################################################################################
+##############################################################################################################################
+
+def load_labels(dataset, path):
+    #Function to load the manually done labels into the the dataframe
+    d = dataset
+    import pandas as pd
+    lbls = pd.read_csv(path)
+    d['label'] = lbls['label']
+    return d
+
+        
