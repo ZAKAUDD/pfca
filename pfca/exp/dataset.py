@@ -4,6 +4,10 @@
 
 #snip a lot of non-microbleeds images from the subject image by traversing through it
 #NOTE: Needs to be made more robest for module mode
+
+import numpy as np
+import pandas as pd
+
 def random_snips(image,r, n_snips):
     #Arguments -->
     #image   : 3D array for snipping. (Note: It must be MNI registered.)

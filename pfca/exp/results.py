@@ -2,6 +2,9 @@
 
 #mosaic plotting
 #plotting all the results in a single pdf file
+import numpy as np
+import pandas as pd
+import matplotlib
 def results_mosaic(rst_output_matrix, image_array, params):
     #rst_output_matrix : 
     import datetime
@@ -216,7 +219,7 @@ def heatmap(data, row_labels, col_labels, ax=None,
     **kwargs
         All other arguments are forwarded to `imshow`.
     """
-
+    import matplotlib.pyplot as plt
     if not ax:
         ax = plt.gca()
 
@@ -281,7 +284,7 @@ def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
         All other arguments are forwarded to each call to `text` used to create
         the text labels.
     """
-
+    import matplotlib.pyplot as plt
     if not isinstance(data, (list, np.ndarray)):
         data = im.get_array()
 
