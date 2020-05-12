@@ -2,9 +2,11 @@
 </br>
 <p><b>Main Contributors:</b>
 <ul>
-  <li>Shwetank Panwar, Dept of Biotechnology, IIT Guwahati</li>
+  <li>Shwetank Panwar, IIT Guwahati</li>
 </ul>
 
 </p>  
 
-<h3>Instructions:</h3>
+<p><b>File Description:</b></p>
+
+
