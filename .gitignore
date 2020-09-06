@@ -12,3 +12,5 @@ pfca/file_read/__pycache__
 pfca/visuals/.DS_Store
 pfca/visuals/__pycache__
 pfca/params
+pfca/datasets/.DS_Store
+pfca/dataset/nifti/.DS_Store
