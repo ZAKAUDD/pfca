@@ -1,5 +1,6 @@
-/datasets/**
 
-/RST_outputs_all/**
+RST_outputs_all/**
+visuals/**
+pfca/__pycache__
+pfca/.DS_Store
 
-/visuals/**
