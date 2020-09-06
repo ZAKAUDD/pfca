@@ -1,6 +1,14 @@
-
+.ipynb_checkpoints
 RST_outputs_all/**
 visuals/**
 pfca/__pycache__
 pfca/.DS_Store
-
+pfca/core/__pycache__
+pfca/core/.DS_Store
+pfca/exp/__pycache__
+pfca/exp/.DS_Store
+pfca/file_read/.DS_Store
+pfca/file_read/__pycache__
+pfca/visuals/.DS_Store
+pfca/visuals/__pycache__
+pfca/params
